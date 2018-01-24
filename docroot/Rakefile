@@ -1,0 +1,21 @@
+require 'sass'
+
+task :default => %w[css js]
+
+task :css do
+  source = FileList['src/css/*.scss'].map { |f| File.read(f) }.join('')
+  source += FileList['src/css/modules/*.scss'].map { |f| File.read(f) }.join('')
+
+  engine = Sass::Engine.new(source, :syntax => :scss, :style => :compressed)
+  css = engine.render()
+
+  File.write('public/app.css', css)
+end
+
+task :js do
+  source = File.read('src/js/boot.js')
+  source += FileList['src/js/modules/*.js'].map { |f| File.read(f) }.join('')
+  source += File.read('src/js/init.js')
+
+  File.write('public/app.js', source)
+end
